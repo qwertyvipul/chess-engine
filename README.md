@@ -1,2 +1,7 @@
 # chess-engine
-Java Chess Engine with an AI to play with.
+
+### Reference
+![Software Architecture & Design](https://youtu.be/h8fSdSUKttk)
+
+### First Look
+![First Look](/images/first-look.png)
