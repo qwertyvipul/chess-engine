@@ -21,7 +21,7 @@ public abstract class Tile {
     	for(int i=0; i<BoardUtils.NUM_TILES; i++) {
     		emptyTileMap.put(i,  new EmptyTile(i));
     	}
-    	
+
     	//return emptyTileMap;
     	//a new library - the guava library by google
     	return ImmutableMap.copyOf(emptyTileMap);
@@ -44,6 +44,10 @@ public abstract class Tile {
 
     public abstract boolean isTileOccupied(); //check if the tile is occupied
     public abstract Piece getPiece(); //get the piece of the given tile
+
+    public int getTileCoordinate(){
+        return this.tileCoordinate;
+    }
 
     public static final class EmptyTile extends Tile{
         private EmptyTile(final int coordinate){
