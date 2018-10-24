@@ -1,5 +1,6 @@
 package com.chess.engine.player;
 
+import com.chess.debug.ChessLog;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
@@ -23,6 +24,7 @@ public class BlackPlayer extends Player{
 
     @Override
     public Collection<Piece> getActivePieces() {
+        ChessLog.indentPrint("[Black Player] inside - getActivePieces()");
         return this.board.getBlackPieces();
     }
 
@@ -60,6 +62,7 @@ public class BlackPlayer extends Player{
                 }
             }
 
+            //black queen side castle move
             if(!this.board.getTile(3).isTileOccupied() &&
                     !this.board.getTile(2).isTileOccupied() &&
                     !this.board.getTile(1).isTileOccupied()){

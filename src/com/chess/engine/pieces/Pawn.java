@@ -17,7 +17,12 @@ public class Pawn extends Piece{
     private final static int[] CANDIDATE_MOVE_VECTOR_COORDINATES = {7, 8, 9, 16};
 
     public Pawn(final Alliance pieceAlliance, final int piecePosition) {
-        super(PieceType.PAWN, piecePosition, pieceAlliance);
+        super(PieceType.PAWN, piecePosition, pieceAlliance, true);
+    }
+
+    public Pawn(final Alliance pieceAlliance, final int piecePosition,
+                final boolean isFirstMove) {
+        super(PieceType.PAWN, piecePosition, pieceAlliance, isFirstMove);
     }
 
     @Override
@@ -47,13 +52,13 @@ public class Pawn extends Piece{
             // if offset is 8 and the destination tile is not occupied then add a moajor move
             if(currentCandidateOffset == 8 && !board.getTile(candidadateDestinationCoordinate).isTileOccupied()){
                 //TODO more work to do here (deal with promotions)!!!
-                legalMoves.add(new Move.MajorMove(board, this, candidadateDestinationCoordinate));
+                legalMoves.add(new Move.PawnJump(board, this, candidadateDestinationCoordinate));
 
             // if offset is 16 and the very first move and black on the second row
             // and the white on the seventh row add the destination is not occupied then add the major move
             }else if(currentCandidateOffset == 16 && this.isFirstMove() && // 16 and first move
-                    (BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack()) || // the black
-                    (BoardUtils.SECOND_RANK[this.piecePosition]) && this.getPieceAlliance().isWhite()){ // the white
+                    ((BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack()) || // the black
+                            (BoardUtils.SECOND_RANK[this.piecePosition] && this.getPieceAlliance().isWhite()))){ // the white
                 final int behindCandidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirection() * 8);
                 // tile is not occupied and neither the previous one then add the major move
                 if(!board.getTile(behindCandidateDestinationCoordinate).isTileOccupied() &&
@@ -69,7 +74,7 @@ public class Pawn extends Piece{
                     final Piece pieceOnCandidate = board.getTile(candidadateDestinationCoordinate).getPiece();
                     if(this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
                         //TODO attcking on pawn promotion
-                        legalMoves.add(new MajorMove(board, this, candidadateDestinationCoordinate));
+                        legalMoves.add(new PawnAttackMove(board, this, candidadateDestinationCoordinate, pieceOnCandidate));
                     }
                 }
             }else if(currentCandidateOffset == 9 &&
@@ -79,7 +84,7 @@ public class Pawn extends Piece{
                     final Piece pieceOnCandidate = board.getTile(candidadateDestinationCoordinate).getPiece();
                     if(this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
                         //TODO attcking on pawn promotion
-                        legalMoves.add(new Move.MajorMove(board, this, candidadateDestinationCoordinate));
+                        legalMoves.add(new PawnAttackMove(board, this, candidadateDestinationCoordinate, pieceOnCandidate));
                     }
                 }
             }

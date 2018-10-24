@@ -1,5 +1,6 @@
 package com.chess.engine.player;
 
+import com.chess.debug.ChessLog;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
@@ -22,6 +23,7 @@ public class WhitePlayer extends Player{
 
     @Override
     public Collection<Piece> getActivePieces() {
+        ChessLog.indentPrint("[White Player] inside - getActivePieces()");
         return this.board.getWhitePieces();
     }
 

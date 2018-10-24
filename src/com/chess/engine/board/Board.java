@@ -1,5 +1,6 @@
 package com.chess.engine.board;
 
+import com.chess.debug.ChessLog;
 import com.chess.engine.Alliance;
 import com.chess.engine.pieces.*;
 import com.chess.engine.player.BlackPlayer;
@@ -7,7 +8,6 @@ import com.chess.engine.player.Player;
 import com.chess.engine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import javafx.util.Builder;
 
 import java.util.*;
 
@@ -66,10 +66,26 @@ public class Board {
     }
 
     public Collection<Piece> getBlackPieces(){
+//        ChessLog.indentUp();
+//        ChessLog.debugPrint("-------------------------------------------------");
+//        ChessLog.debugPrint("[Board] Returning piece board.getBlackPieces(): ");
+//        for(Piece piece : this.blackPieces){
+//            ChessLog.debugPrint(piece.toString());
+//        }
+//        ChessLog.debugPrint("-------------------------------------------------");
+//        ChessLog.indentDown();
         return this.blackPieces;
     }
 
     public Collection<Piece> getWhitePieces(){
+//        ChessLog.indentUp();
+//        ChessLog.debugPrint("-------------------------------------------------");
+//        ChessLog.debugPrint("[Board] Returning piece board.getWhitePieces(): ");
+//        for(Piece piece : this.whitePieces){
+//            ChessLog.debugPrint(piece.toString());
+//        }
+//        ChessLog.debugPrint("-------------------------------------------------");
+//        ChessLog.indentDown();
         return this.whitePieces;
     }
 
@@ -163,6 +179,7 @@ public class Board {
     }
 
     public Player currentPlayer() {
+        ChessLog.indentPrint("[Board] Inside - currentPlayer : " + this.currentPlayer.toString());
         return this.currentPlayer;
     }
 
@@ -180,6 +197,7 @@ public class Board {
         Pawn enPassantPawn;
 
         public Builder(){
+            ChessLog.indentPrint("Inside builder constructor!");
             // The map is a hash map - which maps the integral position of the piece on the board to the piece
             this.boardConfig = new HashMap<>();
         }

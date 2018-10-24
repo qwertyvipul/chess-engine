@@ -1,5 +1,6 @@
 package com.chess.engine.player;
 
+import com.chess.debug.ChessLog;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
@@ -11,7 +12,6 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public abstract class Player {
     // the board on which the player is playing
@@ -23,7 +23,6 @@ public abstract class Player {
     Player(final Board board, final Collection<Move> legalMoves,
            final Collection<Move> opponentMoves){
         this.board = board;
-        System.out.println("Player - " + this.getAlliance());
         this.playerKing = establishKing();
         this.legalMoves = ImmutableList.copyOf(Iterables.concat(legalMoves,
                                                     calculateKingCastles(legalMoves, opponentMoves)));
@@ -42,9 +41,7 @@ public abstract class Player {
 
     private King establishKing(){
         for(final Piece piece : getActivePieces()){
-            System.out.println("Piece: " + piece.getPieceType() +" - "+ piece.getPieceAlliance());
             if(piece.getPieceType().isKing()){
-                System.out.println("Returning - " + piece.getPieceType() +" - "+ piece.getPieceAlliance());
                 return (King)piece;
             }
         }
@@ -72,21 +69,29 @@ public abstract class Player {
     }
 
     public MoveTransition makeMove(final Move move){
+        ChessLog.indentUp();
+        ChessLog.logPrint("[Player] inside - makeMove()");
 
         if(!isMoveLegeal(move)){
+            ChessLog.logPrint("Move is illegal!...returning illegal move");
+            ChessLog.indentDown();
             return new MoveTransition(this.board, move, MoveStatus.ILLEGAL_MOVE);
         }
+        ChessLog.logPrint("Move is legal!");
 
         final Board transitionBoard = move.execute();
 
-        final Collection<Move> kingAttacks = Player.calcaulateAttackOnTile(transitionBoard.currentPlayer().
+        final Collection<Move> kingAttacks = Player.calcaulateAttackOnTile(
+                transitionBoard.currentPlayer().
                 getOpponent().getPlayerKing().getPiecePosition(),
                 transitionBoard.currentPlayer().getLegalMoves());
 
         if(!kingAttacks.isEmpty()){
+            ChessLog.indentDown();
             return new MoveTransition(this.board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK);
         }
 
+        ChessLog.indentDown();
         return new MoveTransition(transitionBoard, move, MoveStatus.DONE);
     }
 

@@ -1,5 +1,6 @@
 package com.chess.engine.board;
 
+import com.chess.debug.ChessLog;
 import com.chess.engine.pieces.Pawn;
 import com.chess.engine.pieces.Piece;
 import com.chess.engine.pieces.Rook;
@@ -7,9 +8,10 @@ import com.chess.engine.pieces.Rook;
 import static com.chess.engine.board.Board.*;
 
 public abstract class Move {
-    final Board board;
-    final Piece movedPiece;
-    final int destinationCoordinate;
+    protected final Board board;
+    protected final Piece movedPiece;
+    protected final int destinationCoordinate;
+    protected final boolean isFirstMove;
 
     public static final Move NULL_MOVE = new NullMove();
 
@@ -17,6 +19,15 @@ public abstract class Move {
         this.board = board;
         this.movedPiece = movedPiece;
         this.destinationCoordinate = destinationCoordinate;
+        this.isFirstMove = movedPiece.isFirstMove();
+    }
+
+    private Move(final Board board,
+                 final int destinationCoordinate){
+        this.board = board;
+        this.destinationCoordinate = destinationCoordinate;
+        this.movedPiece = null;
+        this.isFirstMove = false;
     }
 
     @Override
@@ -26,6 +37,7 @@ public abstract class Move {
 
         result = prime * result + this.destinationCoordinate;
         result = prime * result + this.movedPiece.hashCode();
+        result = prime * result + this.movedPiece.getPiecePosition();
         return result;
     }
 
@@ -39,7 +51,8 @@ public abstract class Move {
         }
         final Move otherMove = (Move) other;
         return getDestinationCoordinate() == otherMove.getDestinationCoordinate() &&
-                getMovedPiece().equals(otherMove.getMovedPiece());
+                    getDestinationCoordinate() == otherMove.getDestinationCoordinate() &&
+                    getMovedPiece().equals(otherMove.getMovedPiece());
     }
 
     public int getCurrentCoordinate(){
@@ -67,18 +80,19 @@ public abstract class Move {
     }
 
     public Board execute() {
+        ChessLog.indentPrint("[Move] inside - execute()");
 
         final Builder builder = new Builder();
 
+        // all the other pieces on the new board to be set as it is except the moved piece
         for(final Piece piece : this.board.currentPlayer().getActivePieces()){
-            //TODO hashcode and equals for pieces
-
-            if(!this.movedPiece.equals(piece)){
+            if(!this.movedPiece.equals(piece)){ //we do not want to set the moved piece
                 builder.setPiece(piece);
             }
         }
 
-        for(final Piece piece : this.board.currentPlayer().getActivePieces()){
+        //set the opponent pieces
+        for(final Piece piece : this.board.currentPlayer().getOpponent().getActivePieces()){
             builder.setPiece(piece);
         }
 
@@ -92,6 +106,17 @@ public abstract class Move {
 
         public MajorMove(final Board board, final Piece movedPiece, final int destinationCoordinate) {
             super(board, movedPiece, destinationCoordinate);
+        }
+
+        @Override
+        public boolean equals(final Object other){
+            return this == other || other instanceof MajorMove && super.equals(other);
+        }
+
+        @Override
+        public String toString(){
+            return movedPiece.getPieceType().toString() +
+                    BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
         }
 
     }
@@ -196,6 +221,11 @@ public abstract class Move {
             builder.setMoveMaker(this.board.currentPlayer().getOpponent().getAlliance());
             return builder.build();
         }
+
+        @Override
+        public String toString(){
+            return BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
+        }
     }
 
     static abstract class CastleMove extends Move{
@@ -280,7 +310,7 @@ public abstract class Move {
     public static final class NullMove extends Move{
 
         public NullMove() {
-            super(null, null, -1);
+            super(null, -1);
         }
 
         @Override
@@ -300,9 +330,11 @@ public abstract class Move {
             for(final Move move : board.getAllLegalMoves()){
                 if(move.getCurrentCoordinate() == currentCoordinate &&
                     move.getDestinationCoordinate() == destinationCoordinate){
+                    System.out.println("Valid move");
                     return move;
                 }
             }
+            System.out.println("Invalid move");
             return NULL_MOVE;
         }
     }
