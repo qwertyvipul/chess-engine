@@ -8,7 +8,7 @@ public class JChess {
         //Board board = Board.createStandardBoard();
         //System.out.println(board);
 
-        ChessLog.CHESS_LOG = true;
+        ChessLog.CHESS_LOG = false;
         ChessLog.logPrint("Inside JChess - creating new table");
         Table table = new Table();
     }

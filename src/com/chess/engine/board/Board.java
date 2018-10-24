@@ -24,6 +24,8 @@ public class Board {
     private final BlackPlayer blackPlayer;
     private final Player currentPlayer;
 
+    private final Pawn enPassantPawn;
+
     //This cunstructor build our chess board
     /*
     * 1. It takes an instance of the builder class
@@ -34,6 +36,7 @@ public class Board {
         this.gameBoard = createGameBoard(builder); //create the game board
         this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
         this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
+        this.enPassantPawn = builder.enPassantPawn;
 
         //calculating the leagal moves
         final Collection<Move> whiteStandardLegalMoves = calculateLegalMoves(this.whitePieces);
@@ -63,6 +66,10 @@ public class Board {
 
     public Player blackPlayer(){
         return this.blackPlayer;
+    }
+
+    public Pawn getEnPassantPawn(){
+        return this.enPassantPawn;
     }
 
     public Collection<Piece> getBlackPieces(){
